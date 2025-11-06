@@ -5,14 +5,6 @@ const client = net.createConnection({ port: 5005 }, () => {
   console.log("Connected to canvas server!");
 });
 
-// Listen for events from the canvas
-client.on("data", (data) => {
-  const lines = data.toString().split("\n").filter(Boolean);
-  lines.forEach((line) => {
-    console.log("Event from canvas:", line);
-  });
-});
-
 // Handle connection close
 client.on("end", () => {
   console.log("Disconnected from canvas server");
@@ -66,6 +58,10 @@ client.on("data", (data) => {
       handleKeyPress(args[0]);
     } else if (type === "resize") {
       render();
+    } else if (type === "mousedown") {
+      const x = parseInt(args[0]);
+      const y = parseInt(args[1]);
+      handleMouseClick(x, y);
     }
   });
 });
@@ -106,6 +102,42 @@ function handleKeyPress(key) {
       key +
       lines[cursorLine].slice(cursorCol);
     cursorCol++;
+  } else if (key === "Left") {
+    if (cursorCol > 0) {
+      cursorCol--;
+    } else if (cursorLine > 0) {
+      cursorLine--;
+      cursorCol = lines[cursorLine].length;
+    }
+  } else if (key === "Right") {
+    if (cursorCol < lines[cursorLine].length) {
+      cursorCol++;
+    } else if (cursorLine < lines.length - 1) {
+      cursorLine++;
+      cursorCol = 0;
+    }
+  } else if (key === "Up") {
+    if (cursorLine > 0) {
+      cursorLine--;
+      cursorCol = Math.min(cursorCol, lines[cursorLine].length);
+    }
+  } else if (key === "Down") {
+    if (cursorLine < lines.length - 1) {
+      cursorLine++;
+      cursorCol = Math.min(cursorCol, lines[cursorLine].length);
+    }
+  }
+
+  render();
+}
+
+function handleMouseClick(x, y) {
+  const line = Math.floor((y - PADDING) / CHAR_HEIGHT);
+  const col = Math.floor((x - PADDING) / CHAR_WIDTH);
+
+  if (line >= 0 && line < lines.length) {
+    cursorLine = line;
+    cursorCol = Math.min(col, lines[cursorLine].length);
   }
 
   render();
