@@ -61,7 +61,7 @@ client.on("data", (data) => {
   const events = data.toString().split("\n").filter(Boolean);
   events.forEach((event) => {
     const [type, ...args] = event.split(",");
-    
+
     if (type === "keydown") {
       handleKeyPress(args[0]);
     } else if (type === "resize") {
@@ -74,8 +74,9 @@ function handleKeyPress(key) {
   if (key === "BackSpace") {
     if (cursorCol > 0) {
       // Delete character before cursor
-      lines[cursorLine] = lines[cursorLine].slice(0, cursorCol - 1) + 
-                          lines[cursorLine].slice(cursorCol);
+      lines[cursorLine] =
+        lines[cursorLine].slice(0, cursorCol - 1) +
+        lines[cursorLine].slice(cursorCol);
       cursorCol--;
     } else if (cursorLine > 0) {
       // Join with previous line
@@ -93,30 +94,32 @@ function handleKeyPress(key) {
     cursorCol = 0;
   } else if (key === "space") {
     // Spacebar
-    lines[cursorLine] = lines[cursorLine].slice(0, cursorCol) + 
-                        " " + 
-                        lines[cursorLine].slice(cursorCol);
+    lines[cursorLine] =
+      lines[cursorLine].slice(0, cursorCol) +
+      " " +
+      lines[cursorLine].slice(cursorCol);
     cursorCol++;
   } else if (key.length === 1) {
     // Regular character
-    lines[cursorLine] = lines[cursorLine].slice(0, cursorCol) + 
-                        key + 
-                        lines[cursorLine].slice(cursorCol);
+    lines[cursorLine] =
+      lines[cursorLine].slice(0, cursorCol) +
+      key +
+      lines[cursorLine].slice(cursorCol);
     cursorCol++;
   }
-  
+
   render();
 }
 
 function render() {
   clear();
-  
+
   // Draw each line of text
   lines.forEach((line, i) => {
     const y = PADDING + i * CHAR_HEIGHT;
     drawText(PADDING, y, "#000000", line || " ");
   });
-  
+
   // Draw cursor
   const cursorX = PADDING + cursorCol * CHAR_WIDTH;
   const cursorY = PADDING + cursorLine * CHAR_HEIGHT;
