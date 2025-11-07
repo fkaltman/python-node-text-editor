@@ -70,6 +70,41 @@ client.on("data", (data) => {
 });
 
 function handleKeyPress(key) {
+  // Map special key names to their characters
+  const keyMap = {
+    period: ".",
+    comma: ",",
+    exclam: "!",
+    question: "?",
+    apostrophe: "'",
+    quotedbl: '"',
+    colon: ":",
+    semicolon: ";",
+    parenleft: "(",
+    parenright: ")",
+    bracketleft: "[",
+    bracketright: "]",
+    braceleft: "{",
+    braceright: "}",
+    slash: "/",
+    backslash: "\\",
+    minus: "-",
+    underscore: "_",
+    plus: "+",
+    equal: "=",
+    at: "@",
+    numbersign: "#",
+    dollar: "$",
+    percent: "%",
+    ampersand: "&",
+    asterisk: "*",
+  };
+
+  // Convert key name to actual character if needed
+  if (keyMap[key]) {
+    key = keyMap[key];
+  }
+
   if (key === "BackSpace") {
     if (cursorCol > 0) {
       // Delete character before cursor
