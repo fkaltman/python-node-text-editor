@@ -50,6 +50,7 @@ const CHAR_HEIGHT = 14; // Height of each character
 const LINE_HEIGHT = 18; // Actual spacing between lines (adds line spacing)
 const PADDING = 26; // Padding from edges (increased for more margin)
 const HEADER_HEIGHT = 40; // Space for header at top (increased for more spacing)
+const MAX_LINE_WIDTH = 90; // Maximum characters per line before auto-wrap
 
 // Listen for canvas events
 client.on("data", (data) => {
@@ -68,6 +69,19 @@ client.on("data", (data) => {
     }
   });
 });
+
+function autoWrapLine() {
+  if (lines[cursorLine].length >= MAX_LINE_WIDTH) {
+    const lastSpace = lines[cursorLine].lastIndexOf(" ");
+    if (lastSpace > 0) {
+      const rightPart = lines[cursorLine].slice(lastSpace + 1);
+      lines[cursorLine] = lines[cursorLine].slice(0, lastSpace);
+      lines.splice(cursorLine + 1, 0, rightPart);
+      cursorLine++;
+      cursorCol = rightPart.length;
+    }
+  }
+}
 
 function handleKeyPress(key) {
   // Map special key names to their characters
@@ -133,6 +147,7 @@ function handleKeyPress(key) {
       " " +
       lines[cursorLine].slice(cursorCol);
     cursorCol++;
+    autoWrapLine();
   } else if (key.length === 1) {
     // Regular character
     lines[cursorLine] =
@@ -140,8 +155,8 @@ function handleKeyPress(key) {
       key +
       lines[cursorLine].slice(cursorCol);
     cursorCol++;
-    // Added below line for emoji animation trigger
     checkForTriggerWords(); // Check if we typed an animal word
+    autoWrapLine();
   } else if (key === "Left") {
     if (cursorCol > 0) {
       cursorCol--;
@@ -188,11 +203,9 @@ function render() {
   clear();
   drawRect(0, 0, 800, 600, "#f5f5f5"); // Light gray background
 
-  // Draw centered header
+  // Draw header (left-aligned)
   const headerText = "✨ Tell me about your pet ✨";
-  const headerWidth = headerText.length * CHAR_WIDTH;
-  const centerX = (800 - headerWidth) / 2;
-  drawText(centerX, PADDING, "#7393B3", headerText);
+  drawText(PADDING, PADDING, "#7393B3", headerText);
 
   // Draw each line of text (shifted down by header)
   lines.forEach((line, i) => {
