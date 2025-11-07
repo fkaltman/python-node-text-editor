@@ -250,6 +250,10 @@ function checkForTriggerWords() {
     { words: ["dragon"], emoji: "🐉" },
     { words: ["koala"], emoji: "🐨" },
     { words: ["fox"], emoji: "🦊" },
+    { words: ["scorpion"], emoji: "🦂" },
+    { words: ["hedgehog"], emoji: "🦔" },
+    { words: ["sauropod"], emoji: "🦕" },
+    { words: ["t-rex"], emoji: "🦖" },
   ];
 
   for (let trigger of triggers) {
