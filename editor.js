@@ -47,8 +47,9 @@ let animations = []; // Active emoji animations
 
 const CHAR_WIDTH = 8; // Width of each character (from README)
 const CHAR_HEIGHT = 14; // Height of each character
-const PADDING = 10; // Padding from edges
-const HEADER_HEIGHT = 30; // Space for header at top
+const LINE_HEIGHT = 18; // Actual spacing between lines (adds line spacing)
+const PADDING = 26; // Padding from edges (increased for more margin)
+const HEADER_HEIGHT = 40; // Space for header at top (increased for more spacing)
 
 // Listen for canvas events
 client.on("data", (data) => {
@@ -137,7 +138,7 @@ function handleKeyPress(key) {
 
 function handleMouseClick(x, y) {
   // Account for header when calculating line position
-  const line = Math.floor((y - PADDING - HEADER_HEIGHT) / CHAR_HEIGHT);
+  const line = Math.floor((y - PADDING - HEADER_HEIGHT) / LINE_HEIGHT);
   const col = Math.floor((x - PADDING) / CHAR_WIDTH);
 
   if (line >= 0 && line < lines.length) {
@@ -150,13 +151,17 @@ function handleMouseClick(x, y) {
 
 function render() {
   clear();
+  drawRect(0, 0, 800, 600, "#f5f5f5"); // Light gray background
 
-  // Draw header
-  drawText(PADDING, PADDING, "#ff4400", "✨ Tell me about your pet ✨");
+  // Draw centered header
+  const headerText = "✨ Tell me about your pet ✨";
+  const headerWidth = headerText.length * CHAR_WIDTH;
+  const centerX = (800 - headerWidth) / 2;
+  drawText(centerX, PADDING, "#7393B3", headerText);
 
   // Draw each line of text (shifted down by header)
   lines.forEach((line, i) => {
-    const y = PADDING + HEADER_HEIGHT + i * CHAR_HEIGHT;
+    const y = PADDING + HEADER_HEIGHT + i * LINE_HEIGHT;
     drawText(PADDING, y, "#000000", line || " ");
   });
 
@@ -167,7 +172,7 @@ function render() {
 
   // Draw cursor (shifted down by header)
   const cursorX = PADDING + cursorCol * CHAR_WIDTH;
-  const cursorY = PADDING + HEADER_HEIGHT + cursorLine * CHAR_HEIGHT;
+  const cursorY = PADDING + HEADER_HEIGHT + cursorLine * LINE_HEIGHT;
   drawRect(cursorX, cursorY, 2, CHAR_HEIGHT, "#000000");
 }
 
@@ -217,7 +222,7 @@ function checkForTriggerWords() {
 function spawnAnimation(emoji) {
   // Start just above the current line (accounting for header)
   const startY =
-    PADDING + HEADER_HEIGHT + cursorLine * CHAR_HEIGHT - CHAR_HEIGHT;
+    PADDING + HEADER_HEIGHT + cursorLine * LINE_HEIGHT - LINE_HEIGHT;
 
   const anim = {
     emoji: emoji,

@@ -38,6 +38,9 @@ def handle_conn(conn):
                width=canvas_width - LEFT_PAD,
                height=canvas_height - TOP_PAD)
     w.pack(expand=YES, fill=BOTH)
+    
+    # Auto-focus the canvas when window opens
+    w.focus_set()
 
     def on_mousedown(event):
         w.focus_set()
