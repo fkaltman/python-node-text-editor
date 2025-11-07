@@ -40,10 +40,10 @@ function clear() {
 // --- text editor  ---
 
 // Editor state
-let lines = [""]; // Array of text lines
+let lines = [""]; 
 let cursorLine = 0; // Which line the cursor is on
 let cursorCol = 0; // Column position in the line
-let animations = []; // Active emoji animations
+let animations = [];
 
 const CHAR_WIDTH = 8; // Required width of each character
 const CHAR_HEIGHT = 14; // Required height of each character
@@ -87,8 +87,8 @@ function autoWrapLine() {
   }
 }
 
+// Map special key names to their characters
 function handleKeyPress(key) {
-  // Map special key names to their characters
   const keyMap = {
     period: ".",
     comma: ",",
@@ -131,21 +131,19 @@ function handleKeyPress(key) {
         lines[cursorLine].slice(cursorCol);
       cursorCol--;
     } else if (cursorLine > 0) {
-      // Join with previous line
+      // Join with previous line if first space or char on a line
       cursorCol = lines[cursorLine - 1].length;
       lines[cursorLine - 1] += lines[cursorLine];
       lines.splice(cursorLine, 1);
       cursorLine--;
     }
   } else if (key === "Return") {
-    // Split line at cursor
     const rightPart = lines[cursorLine].slice(cursorCol);
     lines[cursorLine] = lines[cursorLine].slice(0, cursorCol);
     lines.splice(cursorLine + 1, 0, rightPart);
     cursorLine++;
     cursorCol = 0;
   } else if (key === "space") {
-    // Spacebar
     lines[cursorLine] =
       lines[cursorLine].slice(0, cursorCol) +
       " " +
@@ -199,7 +197,7 @@ function handleMouseClick(x, y) {
     cursorLine = line;
     cursorCol = Math.min(col, lines[cursorLine].length);
   }
-
+  // clear 
   if (
     x >= BUTTON_X &&
     x <= BUTTON_X + BUTTON_W &&
@@ -218,7 +216,7 @@ function handleMouseClick(x, y) {
 
 function render() {
   clear();
-  drawRect(0, 0, 800, 600, "#f5f5f5"); // Light gray background
+  drawRect(0, 0, 800, 600, "#f5f5f5"); 
 
   // Draw header (left-aligned)
   const headerText = "🐌 Tell me about your pet 🐾";
@@ -245,10 +243,10 @@ function render() {
   drawRect(cursorX, cursorY, 2, CHAR_HEIGHT, "#000000");
 }
 
-// Initial render
+// Initial render after short delay to ensure connection
 setTimeout(() => render(), 100);
 
-// Animation functions
+// Animations
 function checkForTriggerWords() {
   const currentLine = lines[cursorLine].toLowerCase();
   const triggers = [
@@ -278,36 +276,35 @@ function checkForTriggerWords() {
     { words: ["worm"], emoji: "🪱" },
     { words: ["snail"], emoji: "🐌" },
   ];
-
+  
+  // Only spawns a new critter if there isn't an animation running for her already
+  // TODO: Allow multiple different critters at once
   for (let trigger of triggers) {
     const matchFound = trigger.words.some((word) => currentLine.includes(word));
     if (matchFound) {
-      // Only spawn if we don't already have an animation running for this emoji
       const alreadyAnimating = animations.some(
         (anim) => anim.emoji === trigger.emoji
       );
       if (!alreadyAnimating) {
         spawnAnimation(trigger.emoji);
       }
-      // Continue checking for other animals in the line
     }
   }
 }
 
 function spawnAnimation(emoji) {
-  // Start just above the current line (accounting for header)
   const startY =
     PADDING + HEADER_HEIGHT + cursorLine * LINE_HEIGHT - LINE_HEIGHT;
 
   const anim = {
     emoji: emoji,
-    x: 0, // Start from left edge
+    x: 0, 
     y: startY,
-    vx: 0.75, // Move right at constant speed (slower)
-    vy: 0, // Will be used for bouncing
-    baseY: startY, // Remember the baseline
+    vx: 0.75, // Move right speed
+    vy: 0, // Critter bounce
+    baseY: startY, // Baseline
     bouncePhase: 0, // For sine wave bounce
-    life: 400, // More frames since we're moving slower
+    life: 400, // More frames make the critter move slower
   };
 
   animations.push(anim);
