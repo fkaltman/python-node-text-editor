@@ -23,8 +23,8 @@ function sendCommand(command) {
 
 // Draw text at x, y with color and string
 function drawText(x, y, color, text) {
-  const safeText = text.replace(/,/g, "");
-  sendCommand(`text,${x},${y},${color},${safeText}`);
+  // const safeText = text.replace(/,/g, "");
+  sendCommand(`text,${x},${y},${color},${text}`);
 }
 
 // Draw a rectangle
@@ -51,6 +51,10 @@ const LINE_HEIGHT = 18; // Actual spacing between lines (adds line spacing)
 const PADDING = 26; // Padding from edges (increased for more margin)
 const HEADER_HEIGHT = 40; // Space for header at top (increased for more spacing)
 const MAX_LINE_WIDTH = 90; // Maximum characters per line before auto-wrap
+const BUTTON_X = 700;
+const BUTTON_Y = 10;
+const BUTTON_W = 80;
+const BUTTON_H = 25;
 
 // Listen for canvas events
 client.on("data", (data) => {
@@ -196,6 +200,19 @@ function handleMouseClick(x, y) {
     cursorCol = Math.min(col, lines[cursorLine].length);
   }
 
+  if (
+    x >= BUTTON_X &&
+    x <= BUTTON_X + BUTTON_W &&
+    y >= BUTTON_Y &&
+    y <= BUTTON_Y + BUTTON_H
+  ) {
+    lines = [""];
+    cursorLine = 0;
+    cursorCol = 0;
+    render();
+    return; // Don't process as text click
+  }
+
   render();
 }
 
@@ -207,10 +224,14 @@ function render() {
   const headerText = "✨ Tell me about your pet ✨";
   drawText(PADDING, PADDING, "#7393B3", headerText);
 
+  // Draw "Clear" button in top right
+  drawRect(BUTTON_X, BUTTON_Y, BUTTON_W, BUTTON_H, "#F24B4B"); // Red button
+  drawText(BUTTON_X + 20, BUTTON_Y + 6, "#ffffff", "Clear");
+
   // Draw each line of text (shifted down by header)
   lines.forEach((line, i) => {
     const y = PADDING + HEADER_HEIGHT + i * LINE_HEIGHT;
-    drawText(PADDING, y, "#000000", line || " ");
+    drawText(PADDING, y, "#383838", line || " ");
   });
 
   // Draw animations
@@ -219,7 +240,7 @@ function render() {
   });
 
   // Draw cursor (shifted down by header)
-  const cursorX = PADDING + cursorCol * CHAR_WIDTH;
+  const cursorX = PADDING + (cursorCol * CHAR_WIDTH) - 2;
   const cursorY = PADDING + HEADER_HEIGHT + cursorLine * LINE_HEIGHT;
   drawRect(cursorX, cursorY, 2, CHAR_HEIGHT, "#000000");
 }
@@ -244,7 +265,7 @@ function checkForTriggerWords() {
     { words: ["peacock"], emoji: "🦚" },
     { words: ["tiger"], emoji: "🐯" },
     { words: ["horse", "pony"], emoji: "🐴" },
-    { words: ["chicken", "hen", "rooster"], emoji: "🐔" },
+    { words: ["chicken", "rooster"], emoji: "🐔" },
     { words: ["squirrel", "chipmunk"], emoji: "🐿️" },
     { words: ["bear"], emoji: "🐻" },
     { words: ["dragon"], emoji: "🐉" },
@@ -284,7 +305,7 @@ function spawnAnimation(emoji) {
     vy: 0, // Will be used for bouncing
     baseY: startY, // Remember the baseline
     bouncePhase: 0, // For sine wave bounce
-    life: 100, // More frames since we're moving slower
+    life: 400, // More frames since we're moving slower
   };
 
   animations.push(anim);
