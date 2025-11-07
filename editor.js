@@ -43,10 +43,12 @@ function clear() {
 let lines = [""]; // Array of text lines
 let cursorLine = 0; // Which line the cursor is on
 let cursorCol = 0; // Column position in the line
+let animations = []; // Active emoji animations
 
 const CHAR_WIDTH = 8; // Width of each character (from README)
 const CHAR_HEIGHT = 14; // Height of each character
 const PADDING = 10; // Padding from edges
+const HEADER_HEIGHT = 30; // Space for header at top
 
 // Listen for canvas events
 client.on("data", (data) => {
@@ -102,6 +104,8 @@ function handleKeyPress(key) {
       key +
       lines[cursorLine].slice(cursorCol);
     cursorCol++;
+    // Added below line for emoji animation trigger
+    checkForTriggerWords(); // Check if we typed an animal word
   } else if (key === "Left") {
     if (cursorCol > 0) {
       cursorCol--;
@@ -132,7 +136,8 @@ function handleKeyPress(key) {
 }
 
 function handleMouseClick(x, y) {
-  const line = Math.floor((y - PADDING) / CHAR_HEIGHT);
+  // Account for header when calculating line position
+  const line = Math.floor((y - PADDING - HEADER_HEIGHT) / CHAR_HEIGHT);
   const col = Math.floor((x - PADDING) / CHAR_WIDTH);
 
   if (line >= 0 && line < lines.length) {
@@ -146,17 +151,108 @@ function handleMouseClick(x, y) {
 function render() {
   clear();
 
-  // Draw each line of text
+  // Draw header
+  drawText(PADDING, PADDING, "#ff4400", "✨ Tell me about your pet ✨");
+
+  // Draw each line of text (shifted down by header)
   lines.forEach((line, i) => {
-    const y = PADDING + i * CHAR_HEIGHT;
+    const y = PADDING + HEADER_HEIGHT + i * CHAR_HEIGHT;
     drawText(PADDING, y, "#000000", line || " ");
   });
 
-  // Draw cursor
+  // Draw animations
+  animations.forEach((anim) => {
+    drawText(Math.floor(anim.x), Math.floor(anim.y), "#000000", anim.emoji);
+  });
+
+  // Draw cursor (shifted down by header)
   const cursorX = PADDING + cursorCol * CHAR_WIDTH;
-  const cursorY = PADDING + cursorLine * CHAR_HEIGHT;
+  const cursorY = PADDING + HEADER_HEIGHT + cursorLine * CHAR_HEIGHT;
   drawRect(cursorX, cursorY, 2, CHAR_HEIGHT, "#000000");
 }
 
 // Initial render
 setTimeout(() => render(), 100);
+
+// Animation functions
+function checkForTriggerWords() {
+  const currentLine = lines[cursorLine].toLowerCase();
+  const triggers = [
+    { words: ["dog", "puppy", "pup"], emoji: "🐶" },
+    { words: ["cat", "kitten", "kitty", "kittie"], emoji: "🐱" },
+    { words: ["bunny", "rabbit"], emoji: "🐰" },
+    { words: ["lizard", "reptile"], emoji: "🦎" },
+    { words: ["bird", "parrot", "parakeet"], emoji: "🐦" },
+    { words: ["fish", "goldfish"], emoji: "🐠" },
+    { words: ["hamster"], emoji: "🐹" },
+    { words: ["turtle", "tortoise"], emoji: "🐢" },
+    { words: ["frog", "toad"], emoji: "🐸" },
+    { words: ["mouse", "mice"], emoji: "🐭" },
+    { words: ["peacock"], emoji: "🦚" },
+    { words: ["tiger"], emoji: "🐯" },
+    { words: ["horse", "pony"], emoji: "🐴" },
+    { words: ["chicken", "hen", "rooster"], emoji: "🐔" },
+    { words: ["squirrel", "chipmunk"], emoji: "🐿️" },
+    { words: ["bear"], emoji: "🐻" },
+    { words: ["dragon"], emoji: "🐉" },
+    { words: ["koala"], emoji: "🐨" },
+    { words: ["fox"], emoji: "🦊" },
+  ];
+
+  for (let trigger of triggers) {
+    const matchFound = trigger.words.some((word) => currentLine.includes(word));
+    if (matchFound) {
+      // Only spawn if we don't already have an animation running for this emoji
+      const alreadyAnimating = animations.some(
+        (anim) => anim.emoji === trigger.emoji
+      );
+      if (!alreadyAnimating) {
+        spawnAnimation(trigger.emoji);
+      }
+      // Continue checking for other animals in the line
+    }
+  }
+}
+
+function spawnAnimation(emoji) {
+  // Start just above the current line (accounting for header)
+  const startY =
+    PADDING + HEADER_HEIGHT + cursorLine * CHAR_HEIGHT - CHAR_HEIGHT;
+
+  const anim = {
+    emoji: emoji,
+    x: 0, // Start from left edge
+    y: startY,
+    vx: 0.75, // Move right at constant speed (slower)
+    vy: 0, // Will be used for bouncing
+    baseY: startY, // Remember the baseline
+    bouncePhase: 0, // For sine wave bounce
+    life: 100, // More frames since we're moving slower
+  };
+
+  animations.push(anim);
+}
+
+function updateAnimations() {
+  animations = animations.filter((anim) => {
+    anim.x += anim.vx;
+
+    // Add a bouncing motion
+    anim.bouncePhase += 0.3;
+    anim.y = anim.baseY + Math.sin(anim.bouncePhase) * 8;
+
+    // Remove when it goes off the right edge
+    if (anim.x > 800) return false;
+
+    anim.life--;
+    return anim.life > 0;
+  });
+}
+
+// Animation loop - runs at 20fps
+setInterval(() => {
+  if (animations.length > 0) {
+    updateAnimations();
+    render();
+  }
+}, 50);

@@ -119,20 +119,30 @@ def handle_conn(conn):
     w.bind("<Configure>", on_configure)
 
     def read_commands():
-        buffer = ''
+        buffer = b''  # Use byte buffer
+        
         while True:
-            data = conn.recv(100).decode()
-            if not data:
-                break
-
-            buffer = buffer + data
-            index = buffer.find('\n')
-            while index != -1:
-                command = buffer[0:index]
-                if len(command) > 0:
-                    cmd_queue.put(command)
-                buffer = buffer[index + 1:]
-                index = buffer.find('\n')
+            try:
+                chunk = conn.recv(1024)
+                if not chunk:
+                    break
+                
+                buffer += chunk
+                
+                # Try to decode and process complete lines
+                while b'\n' in buffer:
+                    line_bytes, buffer = buffer.split(b'\n', 1)
+                    try:
+                        command = line_bytes.decode('utf-8').strip()
+                        if len(command) > 0:
+                            cmd_queue.put(command)
+                    except UnicodeDecodeError as e:
+                        print(f"Skipping malformed command: {e}")
+                        continue
+                        
+            except Exception as e:
+                print(f"Error in read_commands: {e}")
+                continue
 
         cmd_queue.put('quit')
 
