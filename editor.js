@@ -1,8 +1,8 @@
 const net = require("net");
 
-// Connect to the canvas server
+
 const client = net.createConnection({ port: 5005 }, () => {
-  console.log("Connected to canvas server!");
+  console.log("Connected to canvas server");
 });
 
 // Handle connection close
@@ -37,7 +37,7 @@ function clear() {
   sendCommand("clear");
 }
 
-// --- Start building your text editor here ---
+// --- text editor  ---
 
 // Editor state
 let lines = [""]; // Array of text lines
@@ -45,12 +45,12 @@ let cursorLine = 0; // Which line the cursor is on
 let cursorCol = 0; // Column position in the line
 let animations = []; // Active emoji animations
 
-const CHAR_WIDTH = 8; // Width of each character (from README)
-const CHAR_HEIGHT = 14; // Height of each character
-const LINE_HEIGHT = 18; // Actual spacing between lines (adds line spacing)
-const PADDING = 26; // Padding from edges (increased for more margin)
-const HEADER_HEIGHT = 40; // Space for header at top (increased for more spacing)
-const MAX_LINE_WIDTH = 90; // Maximum characters per line before auto-wrap
+const CHAR_WIDTH = 8; // Required width of each character
+const CHAR_HEIGHT = 14; // Required height of each character
+const LINE_HEIGHT = 18; 
+const PADDING = 26; 
+const HEADER_HEIGHT = 40; 
+const MAX_LINE_WIDTH = 80; 
 const BUTTON_X = 700;
 const BUTTON_Y = 10;
 const BUTTON_W = 80;
@@ -221,7 +221,7 @@ function render() {
   drawRect(0, 0, 800, 600, "#f5f5f5"); // Light gray background
 
   // Draw header (left-aligned)
-  const headerText = "🐾 Tell me about your pet 🐚";
+  const headerText = "🐌 Tell me about your pet 🐾";
   drawText(PADDING, PADDING, "#4b78a5", headerText);
 
   // Draw "Clear" button in top right
@@ -276,6 +276,7 @@ function checkForTriggerWords() {
     { words: ["skunk"], emoji: "🦨" },
     { words: ["t-rex"], emoji: "🦖" },
     { words: ["worm"], emoji: "🪱" },
+    { words: ["snail"], emoji: "🐌" },
   ];
 
   for (let trigger of triggers) {
