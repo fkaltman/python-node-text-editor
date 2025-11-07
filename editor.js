@@ -252,7 +252,7 @@ setTimeout(() => render(), 100);
 function checkForTriggerWords() {
   const currentLine = lines[cursorLine].toLowerCase();
   const triggers = [
-    { words: ["dog", "puppy", "pup"], emoji: "🐶" },
+    { words: ["dog", "puppy", "pup","boofer","woofer","shoos"], emoji: "🐶" },
     { words: ["cat", "kitten", "kitty", "kittie"], emoji: "🐱" },
     { words: ["bunny", "rabbit"], emoji: "🐰" },
     { words: ["lizard", "reptile"], emoji: "🦎" },
@@ -275,6 +275,7 @@ function checkForTriggerWords() {
     { words: ["hedgehog"], emoji: "🦔" },
     { words: ["sauropod"], emoji: "🦕" },
     { words: ["t-rex"], emoji: "🦖" },
+    { words: ["worm"], emoji: "🪱" },
   ];
 
   for (let trigger of triggers) {
