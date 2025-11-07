@@ -30,7 +30,7 @@ def handle_conn(conn):
     # Queue for sending commands received on the socket to the canvas
     cmd_queue = queue.Queue()
     window = Toplevel()
-    window.wm_title("Hello")
+    window.wm_title("Pet Chat")
 
     canvas_width = 800
     canvas_height = 600

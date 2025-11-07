@@ -221,8 +221,8 @@ function render() {
   drawRect(0, 0, 800, 600, "#f5f5f5"); // Light gray background
 
   // Draw header (left-aligned)
-  const headerText = "✨ Tell me about your pet ✨";
-  drawText(PADDING, PADDING, "#7393B3", headerText);
+  const headerText = "🐾 Tell me about your pet 🐚";
+  drawText(PADDING, PADDING, "#4b78a5", headerText);
 
   // Draw "Clear" button in top right
   drawRect(BUTTON_X, BUTTON_Y, BUTTON_W, BUTTON_H, "#F24B4B"); // Red button
@@ -252,7 +252,7 @@ setTimeout(() => render(), 100);
 function checkForTriggerWords() {
   const currentLine = lines[cursorLine].toLowerCase();
   const triggers = [
-    { words: ["dog", "puppy", "pup","boofer","woofer","shoos"], emoji: "🐶" },
+    { words: ["dog", "puppy", "pup", "boofer", "woofer", "shoos"], emoji: "🐶" },
     { words: ["cat", "kitten", "kitty", "kittie"], emoji: "🐱" },
     { words: ["bunny", "rabbit"], emoji: "🐰" },
     { words: ["lizard", "reptile"], emoji: "🦎" },
@@ -273,7 +273,7 @@ function checkForTriggerWords() {
     { words: ["fox"], emoji: "🦊" },
     { words: ["scorpion"], emoji: "🦂" },
     { words: ["hedgehog"], emoji: "🦔" },
-    { words: ["sauropod"], emoji: "🦕" },
+    { words: ["skunk"], emoji: "🦨" },
     { words: ["t-rex"], emoji: "🦖" },
     { words: ["worm"], emoji: "🪱" },
   ];
