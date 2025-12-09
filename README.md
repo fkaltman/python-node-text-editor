@@ -3,6 +3,10 @@
 A lightweight, experimental text editor built on top of a custom Tkinter-based **socket canvas API**.  
 The editor communicates with a canvas window over a TCP socket, sending drawing commands and receiving real-time keyboard/mouse events.
 
+One of the playful features of this editor: **when you type the name of an animal, a matching animal emoji “bops” across the screen.**  
+For example, typing “cat” makes 🐱 stroll across the canvas, “penguin” makes 🐧 waddle by, and so on.  
+This turns the editor into a lively, animated environment that responds to your words in real time.
+
 ---
 
 ## 🚀 Features
