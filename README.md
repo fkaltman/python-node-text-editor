@@ -1,4 +1,4 @@
-# Socket-Driven Text Editor — with Bouncing Animal Emojis 🐱🐧🐰
+# Socket-Driven Text Editor with Bouncing Animal Emojis 🐱🐧🐰
 
 A lightweight, experimental text editor built on top of a custom Tkinter-based **socket canvas API**.  
 The editor communicates with a canvas window over a TCP socket, sending drawing commands and receiving real-time keyboard/mouse events.
